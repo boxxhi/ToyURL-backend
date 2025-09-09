@@ -1,0 +1,24 @@
+import crypto from "node:crypto";
+
+function randomString(length: number): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+export function createCode(url: string): string {
+    const hashed = crypto
+        .createHash("sha256")
+        .update(url, "utf-8")
+        .digest()
+        .toString("hex")
+        .slice(0, 3);
+
+    const ts = Date.now().toString().slice(-3);
+    const code = Buffer.from(`${ts}${hashed}${randomString(2)}`, "utf-8").toString("base64url");
+
+    return code;
+}

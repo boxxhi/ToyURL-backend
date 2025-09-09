@@ -1,6 +1,6 @@
 import { int, text, sqliteTable } from 'drizzle-orm/sqlite-core';
 
-export const linksTable = sqliteTable('links_table', {
+export const linksTable = sqliteTable('global_links', {
     id: int().notNull().primaryKey( { autoIncrement: true }),
     original_link: text().notNull(),
     code: text().notNull(),
