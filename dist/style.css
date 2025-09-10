@@ -1,0 +1,32 @@
+
+:root
+{
+  --primary-background-color: #022341;
+  --alt-background-color: white;
+  --btn-color: #7EFC8D;
+  --muted-color: #698187;
+  --primary-color: #031F39;
+  --gradient-color: #688EC9;
+}
+
+*
+{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  font-family: 'Noto Sans';
+}
+
+*::after, *::before
+{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body
+{
+  min-height: 100vh;
+  background-image: linear-gradient(to bottom, var(--primary-background-color) 50%, var(--gradient-color) 180%);
+}
