@@ -49,9 +49,13 @@ function base64Encode(input: string) {
   return Buffer.from(input, 'utf-8').toString('base64')
 }
 
-export function createToken(email: string, password: string): string {
+export function createToken(email: string, password: string, isGoogle: boolean = false): string {
   const expire = Date.now() + 1800000
-  const plain = `${email}${expire}`
+  let plain = `${email}|${expire}`
+
+  if (isGoogle) plain += '|true'
+  else plain += '|false'
+
   const encoded = base64Encode(plain)
 
   return base64Encode(encoded + '.' + sign(encoded, password))

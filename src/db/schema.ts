@@ -13,3 +13,10 @@ export const usersTable = sqliteTable('users', {
     password: text().notNull(),
     created_at: int().notNull()
 })
+
+export const googleTable = sqliteTable('googleTable', {
+    id: int().notNull().primaryKey( { autoIncrement: true }),
+    email: text().notNull(),
+    user_id: text().notNull(),
+    created_at: int().notNull()
+})
