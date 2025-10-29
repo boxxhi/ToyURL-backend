@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 
 import { drizzle } from "drizzle-orm/libsql";
-import { createCode } from "./util.ts";
-import { linksTable } from "./db/schema.ts";
+import { createCode, createToken, encodePassword } from "./util.ts";
+import { linksTable, usersTable } from "./db/schema.ts";
 import { eq } from "drizzle-orm";
 
 dotenv.config();
@@ -68,6 +68,69 @@ app.post("/api/lookup", async (req, res) => {
     });
 });
 
+app.post("/api/login", async (req, res) => {
+
+    const data = req.body;
+
+    const password = data["password"];
+    const email = data["email"];
+
+    const realPasswords  = await db
+        .select({
+            password: usersTable.password
+        })
+        .from(usersTable)
+        .where(eq(usersTable.email, email))
+
+    if (realPasswords.length == 0) {
+        return void res.status(401).send({
+            message: "email_not_found",
+            success: false
+        })
+    }
+
+    const realPassword = realPasswords[0].password
+
+    if (encodePassword(password) === realPassword) {
+        return void res.status(200).send({
+            success: true,
+            token: createToken(email, password)
+        })
+    }
+
+    res.status(401).send({
+        success: false,
+        message: "invalid_password"
+    })
+})
+
+app.post("/api/register", async (req, res) => {
+    const data = req.body;
+    const password = data["password"];
+    const email = data["email"];
+
+    const emailEntries = await db.select({email: usersTable.email}).from(usersTable)
+    const emails = emailEntries.map((v) => v.email)
+
+    if (emails.includes(email)) {
+        return res.status(401).send({
+            success: false,
+            message: "already_used"
+        })
+    }
+
+    await db.insert(usersTable).values({
+        email: email,
+        password: encodePassword(password),
+        created_at: Date.now(),
+    });
+
+    res.status(201).send({
+        success: true,
+        token: createToken(email, password)
+    })
+})
+
 app.get("/", (req, res) => {
     res.sendFile("index.html", { root: "dist" });
 });
@@ -78,6 +141,14 @@ app.get("/code", (req, res) => {
 
 app.get("/c/:code", (req, res) => {
     res.sendFile("code.html", { root: "dist" });
+});
+
+app.get("/login", (req, res) => {
+    res.sendFile("login.html", { root: "dist" });
+});
+
+app.get("/register", (req, res) => {
+    res.sendFile("register.html", { root: "dist" });
 });
 
 app.listen(port, () => {

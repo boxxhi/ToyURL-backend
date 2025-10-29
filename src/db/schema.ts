@@ -6,3 +6,10 @@ export const linksTable = sqliteTable('global_links', {
     code: text().notNull(),
     created_at: int().notNull()
 })
+
+export const usersTable = sqliteTable('users', {
+    id: int().notNull().primaryKey( { autoIncrement: true }),
+    email: text().notNull(),
+    password: text().notNull(),
+    created_at: int().notNull()
+})
