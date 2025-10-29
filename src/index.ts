@@ -6,21 +6,12 @@ import { createCode, createToken, encodePassword } from "./util.ts";
 import { googleTable, linksTable, usersTable } from "./db/schema.ts";
 import { eq } from "drizzle-orm";
 
-import { OAuth2Client } from "google-auth-library";
-
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
 
 const db = drizzle(process.env.DB_FILE_NAME!);
-
-const CLIENT_ID =
-    "648082753611-avdkjg12avmnjhkug73j7asfsd9gef7e.apps.googleusercontent.com";
-const googleClient = new OAuth2Client({
-    client_id: CLIENT_ID,
-    redirect_uris: ["http://localhost:3000", "http://localhost:5173"],
-});
 
 app.use(express.json());
 app.use(express.static("dist"));
